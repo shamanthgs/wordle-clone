@@ -7,15 +7,19 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+const deleteActions = ['Delete', 'Backspace'];
+
 const Attempt = ({ attempt, numberOfLetters }) => {
   const [word, setWord] = useState('');
 
-  const handleKeyPress = useCallback(
+  const handleKeyDown = useCallback(
     (keyPressEvent) => {
-      if (word.length === numberOfLetters) {
-        return;
+      if (keyPressEvent.key.length === 1 && word.length < numberOfLetters) {
+        setWord((word) => word + keyPressEvent.key);
       }
-      setWord((word) => word + keyPressEvent.key);
+      if (deleteActions.includes(keyPressEvent.key)) {
+        setWord((word) => word.slice(0, -1));
+      }
     },
     [setWord, word.length, numberOfLetters]
   );
@@ -29,14 +33,11 @@ const Attempt = ({ attempt, numberOfLetters }) => {
               style={{ width: '20px', height: '20px' }}
               type="text"
               value={word.length > letterIndex ? word[letterIndex] : ''}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               maxLength={1}
               readOnly
             />
           </TableCell>
-          //   <TableCell key={letterIndex} align="center">
-          //     <p>Blah</p>
-          //   </TableCell>
         )
       )}
     </TableRow>
