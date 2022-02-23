@@ -15,7 +15,7 @@ const Attempt = ({ attempt, numberOfLetters }) => {
   const handleKeyDown = useCallback(
     (keyPressEvent) => {
       if (keyPressEvent.key.length === 1 && word.length < numberOfLetters) {
-        setWord((word) => word + keyPressEvent.key);
+        setWord((word) => word + keyPressEvent.key.toLocaleUpperCase());
       }
       if (deleteActions.includes(keyPressEvent.key)) {
         setWord((word) => word.slice(0, -1));
@@ -30,7 +30,12 @@ const Attempt = ({ attempt, numberOfLetters }) => {
         (letterIndex) => (
           <TableCell key={letterIndex} align="center">
             <input
-              style={{ width: '20px', height: '20px' }}
+              style={{
+                width: '20px',
+                height: '20px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
               type="text"
               value={word.length > letterIndex ? word[letterIndex] : ''}
               onKeyDown={handleKeyDown}
