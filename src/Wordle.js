@@ -10,9 +10,23 @@ import { ButtonGroup, Button } from '@mui/material';
 import { Done, Clear } from '@mui/icons-material';
 
 const deleteActions = ['Delete', 'Backspace'];
+const PERFECT_MATCH = 0;
+const PARTIAL_MATCH = 1;
+const NO_MATCH = 2;
 
-const Attempt = ({ attempt, numberOfLetters }) => {
+const validateLetter = (word, letter, letterIndex) => {
+  if (!word.includes(letter)) {
+    return NO_MATCH;
+  }
+  if (word.indexOf(letter) === letterIndex) {
+    return PERFECT_MATCH;
+  }
+  return PARTIAL_MATCH;
+};
+
+const Attempt = ({ correctWord, attempt, numberOfLetters }) => {
   const [word, setWord] = useState('');
+  const [matches, setMatches] = useState('');
 
   const handleKeyDown = useCallback(
     (keyPressEvent) => {
@@ -25,6 +39,20 @@ const Attempt = ({ attempt, numberOfLetters }) => {
     },
     [setWord, word.length, numberOfLetters]
   );
+
+  const handleClear = useCallback(() => {
+    setWord('');
+  }, [setWord]);
+
+  const handleSubmit = useCallback(() => {
+    const matches = Array.from(word)
+      .map((letter, index) => validateLetter(correctWord, letter, index))
+      .join('');
+    setMatches(matches);
+    console.log('correctWord', correctWord);
+    console.log('word', word);
+    console.log('matches', matches);
+  }, [setMatches, word, correctWord]);
 
   return (
     <TableRow key={attempt}>
@@ -50,10 +78,10 @@ const Attempt = ({ attempt, numberOfLetters }) => {
       )}
       <TableCell key="actions" size="small" align="center">
         <ButtonGroup aria-label="actions">
-          <Button size="small" aria-label="submit">
+          <Button size="small" aria-label="submit" onClick={handleSubmit}>
             <Done />
           </Button>
-          <Button size="small" aria-label="clear">
+          <Button size="small" aria-label="clear" onClick={handleClear}>
             <Clear />
           </Button>
         </ButtonGroup>
@@ -62,7 +90,8 @@ const Attempt = ({ attempt, numberOfLetters }) => {
   );
 };
 
-export const BasicTable = ({ numberOfLetters = 5 }) => {
+export const BasicTable = ({ correctWord }) => {
+  const numberOfLetters = correctWord.length;
   const numberOfRows = numberOfLetters + 1;
   const numberOfColumns = numberOfLetters + 1;
   return (
@@ -80,6 +109,7 @@ export const BasicTable = ({ numberOfLetters = 5 }) => {
             (attemptIndex) => (
               <Attempt
                 key={'attempt' + attemptIndex}
+                correctWord={correctWord}
                 attempt={attemptIndex}
                 numberOfLetters={numberOfLetters}
               />
@@ -92,9 +122,10 @@ export const BasicTable = ({ numberOfLetters = 5 }) => {
 };
 
 export const Wordle = () => {
+  const correctWord = 'HELLO';
   return (
     <div>
-      <BasicTable />
+      <BasicTable correctWord={correctWord} />
     </div>
   );
 };
