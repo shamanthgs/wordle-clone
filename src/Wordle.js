@@ -6,6 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { ButtonGroup, Button } from '@mui/material';
+import { Done, Clear } from '@mui/icons-material';
 
 const deleteActions = ['Delete', 'Backspace'];
 
@@ -28,13 +30,14 @@ const Attempt = ({ attempt, numberOfLetters }) => {
     <TableRow key={attempt}>
       {[...Array.from({ length: numberOfLetters }).keys()].map(
         (letterIndex) => (
-          <TableCell key={letterIndex} align="center">
+          <TableCell key={letterIndex} align="center" size="small">
             <input
               style={{
                 width: '20px',
                 height: '20px',
                 fontWeight: 'bold',
                 textAlign: 'center',
+                outline: 'none',
               }}
               type="text"
               value={word.length > letterIndex ? word[letterIndex] : ''}
@@ -45,18 +48,29 @@ const Attempt = ({ attempt, numberOfLetters }) => {
           </TableCell>
         )
       )}
+      <TableCell key="actions" size="small" align="center">
+        <ButtonGroup aria-label="actions">
+          <Button size="small" aria-label="submit">
+            <Done />
+          </Button>
+          <Button size="small" aria-label="clear">
+            <Clear />
+          </Button>
+        </ButtonGroup>
+      </TableCell>
     </TableRow>
   );
 };
 
 export const BasicTable = ({ numberOfLetters = 5 }) => {
   const numberOfRows = numberOfLetters + 1;
+  const numberOfColumns = numberOfLetters + 1;
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow key="header">
-            <TableCell colSpan={numberOfLetters} sx={{ textAlign: 'center' }}>
+            <TableCell colSpan={numberOfColumns} sx={{ textAlign: 'center' }}>
               Wordle
             </TableCell>
           </TableRow>
