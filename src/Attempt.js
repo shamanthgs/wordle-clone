@@ -6,27 +6,24 @@ import { Done, Clear } from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 
-const useStyles = makeStyles((theme) => {
-  const commonLetterInput = {
+const useStyles = makeStyles((theme) => ({
+  letterInput: {
     width: '20px',
     height: '20px',
     fontWeight: 'bold',
     textAlign: 'center',
     outline: 'none',
-  };
-  return {
-    letterInput: { ...commonLetterInput },
-    partialMatch: {
-      backgroundColor: 'yellow',
-    },
-    perfectMatch: {
-      backgroundColor: 'green',
-    },
-    noMatch: {
-      backgroundColor: 'white',
-    },
-  };
-});
+  },
+  partialMatch: {
+    backgroundColor: 'yellow',
+  },
+  perfectMatch: {
+    backgroundColor: 'green',
+  },
+  noMatch: {
+    backgroundColor: 'white',
+  },
+}));
 
 const deleteActions = ['Delete', 'Backspace'];
 const PERFECT_MATCH = 0;
