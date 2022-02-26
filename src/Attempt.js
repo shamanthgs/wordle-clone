@@ -33,14 +33,18 @@ const PERFECT_MATCH = 0;
 const PARTIAL_MATCH = 1;
 const NO_MATCH = 2;
 
-const validateLetter = (word, letter, letterIndex) => {
-  if (!word.includes(letter)) {
-    return NO_MATCH;
-  }
-  if (word.indexOf(letter) === letterIndex) {
-    return PERFECT_MATCH;
-  }
-  return PARTIAL_MATCH;
+const validateWord = (word, testWord) => {
+  return Array.from(testWord)
+    .map((letter, index) => {
+      if (word[index] === letter) {
+        return PERFECT_MATCH;
+      }
+      if (word.includes(letter)) {
+        return PARTIAL_MATCH;
+      }
+      return NO_MATCH;
+    })
+    .join('');
 };
 
 export const Attempt = ({ correctWord, attempt, numberOfLetters }) => {
@@ -65,9 +69,7 @@ export const Attempt = ({ correctWord, attempt, numberOfLetters }) => {
   }, [setWord]);
 
   const handleSubmit = useCallback(() => {
-    const matches = Array.from(word)
-      .map((letter, index) => validateLetter(correctWord, letter, index))
-      .join('');
+    const matches = validateWord(correctWord, word);
     setMatches(matches);
     console.log('correctWord', correctWord);
     console.log('word', word);
