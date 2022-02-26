@@ -71,9 +71,6 @@ export const Attempt = ({ correctWord, attempt, numberOfLetters }) => {
   const handleSubmit = useCallback(() => {
     const matches = validateWord(correctWord, word);
     setMatches(matches);
-    console.log('correctWord', correctWord);
-    console.log('word', word);
-    console.log('matches', matches);
   }, [setMatches, word, correctWord]);
 
   return (
