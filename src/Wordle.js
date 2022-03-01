@@ -56,8 +56,8 @@ export const BasicTable = ({ correctWord }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '550px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <div style={{ width: '35%' }}>
           <Keyboard
             layout={keyboardLayout}
             onChange={onChange}
