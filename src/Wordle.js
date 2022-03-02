@@ -48,7 +48,7 @@ export const BasicTable = ({ correctWord }) => {
   const [matches, setMatches] = useState(
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
   );
-  // const allowMoreKeys = words[attempts].length < numberOfLetters;
+  const allowMoreKeys = words[attempts].length < numberOfLetters;
 
   const handleSubmit = useCallback(() => {
     const matches = validateWord(correctWord, words[attempts]);
@@ -59,21 +59,32 @@ export const BasicTable = ({ correctWord }) => {
 
   const onChange = (input) => {
     console.log('Input changed', input);
-    if ((input || '').length <= numberOfLetters) {
-      setWords((currWords) =>
-        currWords.map((word, index) =>
-          index === attempts ? input.toLocaleUpperCase() : word
-        )
-      );
-    }
   };
 
   const onKeyPress = (button) => {
     console.log('Button pressed', button);
-    if (button === '{enter}') {
-      handleSubmit();
-      setAttempts((currAttempts) => currAttempts + 1);
-      keyboard.current.clearInput();
+    switch (button) {
+      case '{enter}':
+        handleSubmit();
+        setAttempts((currAttempts) => currAttempts + 1);
+        break;
+      case '{bksp}':
+        if (words[attempts].length > 0) {
+          setWords((currWords) =>
+            currWords.map((word, index) =>
+              index === attempts ? word.slice(0, -1) : word
+            )
+          );
+        }
+        break;
+      default:
+        if (allowMoreKeys) {
+          setWords((currWords) =>
+            currWords.map((word, index) =>
+              index === attempts ? word + button.toLocaleUpperCase() : word
+            )
+          );
+        }
     }
   };
 
