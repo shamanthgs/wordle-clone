@@ -10,6 +10,7 @@ import { Attempt } from './Attempt';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import { constants } from './constants';
+import { makeStyles } from '@mui/styles';
 
 const defaultLayout = [
   'q w e r t y u i o p',
@@ -34,6 +35,41 @@ const validateWord = (word, testWord) => {
     .join('');
 };
 
+const trackButtons = (word, matches) => {
+  const clickedButtons = [],
+    perfectMatchButtons = [],
+    partialMatchButtons = [];
+  for (let i = 0; i < word.length; i++) {
+    if (parseInt(matches[i]) === PERFECT_MATCH) {
+      perfectMatchButtons.push(word[i].toLocaleLowerCase());
+    } else if (parseInt(matches[i]) === PARTIAL_MATCH) {
+      partialMatchButtons.push(word[i].toLocaleLowerCase());
+    } else {
+      clickedButtons.push(word[i].toLocaleLowerCase());
+    }
+  }
+  return {
+    clickedButtons,
+    perfectMatchButtons,
+    partialMatchButtons,
+  };
+};
+
+const useStyles = makeStyles((theme) => ({
+  clickedButtonStyle: {
+    background: 'grey',
+    color: 'white',
+  },
+  partialMatchButtonStyle: {
+    backgroundColor: 'yellow',
+    color: 'white',
+  },
+  perfectMatchButtonStyle: {
+    backgroundColor: 'green',
+    color: 'white',
+  },
+}));
+
 export const BasicTable = ({ correctWord }) => {
   const numberOfLetters = correctWord.length;
   const numberOfRows = numberOfLetters + 1,
@@ -49,11 +85,44 @@ export const BasicTable = ({ correctWord }) => {
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
   );
   const allowMoreKeys = words[attempts].length < numberOfLetters;
+  const [buttons, setButtons] = useState({
+    clickedButtons: [],
+    partialMatchButtons: [],
+    perfectMatchButtons: [],
+  });
+  const classes = useStyles();
+  const buttonTheme = [
+    {
+      class: 'hg-grey',
+      buttons: buttons.clickedButtons.length
+        ? buttons.clickedButtons.join(' ')
+        : '',
+    },
+    {
+      class: 'hg-yellow',
+      buttons: buttons.partialMatchButtons.length
+        ? buttons.partialMatchButtons.join(' ')
+        : '',
+    },
+    {
+      class: 'hg-green',
+      buttons: buttons.perfectMatchButtons.length
+        ? buttons.perfectMatchButtons.join(' ')
+        : '',
+    },
+  ];
 
   const handleSubmit = useCallback(() => {
     const matches = validateWord(correctWord, words[attempts]);
     setMatches((currMatches) =>
       currMatches.map((match, index) => (index === attempts ? matches : match))
+    );
+    setButtons(trackButtons(words[attempts], matches));
+    console.log(
+      'trackedButtons',
+      words[attempts],
+      matches,
+      trackButtons(words[attempts], matches)
     );
   }, [setMatches, words, correctWord, attempts]);
 
@@ -66,6 +135,13 @@ export const BasicTable = ({ correctWord }) => {
     switch (button) {
       case '{enter}':
         handleSubmit();
+        // setButtons(trackButtons(words[attempts], matches[attempts]));
+        // console.log(
+        //   'trackedButtons',
+        //   words[attempts],
+        //   matches[attempts],
+        //   buttons
+        // );
         setAttempts((currAttempts) => currAttempts + 1);
         break;
       case '{bksp}':
@@ -125,6 +201,7 @@ export const BasicTable = ({ correctWord }) => {
             physicalKeyboardHighlight
             physicalKeyboardHighlightPress
             maxLength={numberOfLetters}
+            buttonTheme={buttonTheme}
           />
         </div>
       </div>

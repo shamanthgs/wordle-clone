@@ -1,3 +1,16 @@
 .App {
   text-align: center;
 }
+
+.simple-keyboard.hg-layout-default .hg-button.hg-yellow {
+  background: yellow;
+  color: black;
+}
+.simple-keyboard.hg-layout-default .hg-button.hg-grey {
+  background: grey;
+  color: black;
+}
+.simple-keyboard.hg-layout-default .hg-button.hg-green {
+  background: green;
+  color: black;
+}
