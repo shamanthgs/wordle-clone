@@ -9,7 +9,8 @@ import Paper from '@mui/material/Paper';
 import { Attempt } from './Attempt';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
-import { constants } from './constants';
+import { useWords, validateWord } from './useWords';
+import { useButtons, trackButtons } from './useButtons';
 
 const defaultLayout = [
   'q w e r t y u i o p',
@@ -18,46 +19,6 @@ const defaultLayout = [
 ];
 const keyboardLayout = {
   default: defaultLayout,
-};
-const { PERFECT_MATCH, PARTIAL_MATCH, NO_MATCH } = constants;
-const validateWord = (word, testWord) => {
-  return Array.from(testWord)
-    .map((letter, index) => {
-      if (word[index] === letter) {
-        return PERFECT_MATCH;
-      }
-      if (word.includes(letter)) {
-        return PARTIAL_MATCH;
-      }
-      return NO_MATCH;
-    })
-    .join('');
-};
-
-const trackButtons = (buttons, word, matches) => {
-  const clickedButtons = [],
-    perfectMatchButtons = [],
-    partialMatchButtons = [];
-  for (let i = 0; i < word.length; i++) {
-    if (parseInt(matches[i]) === PERFECT_MATCH) {
-      perfectMatchButtons.push(word[i].toLocaleLowerCase());
-    } else if (parseInt(matches[i]) === PARTIAL_MATCH) {
-      partialMatchButtons.push(word[i].toLocaleLowerCase());
-    } else {
-      clickedButtons.push(word[i].toLocaleLowerCase());
-    }
-  }
-  return {
-    clickedButtons: [
-      ...new Set([...buttons.clickedButtons, ...clickedButtons]),
-    ],
-    perfectMatchButtons: [
-      ...new Set([...buttons.perfectMatchButtons, ...perfectMatchButtons]),
-    ],
-    partialMatchButtons: [
-      ...new Set([...buttons.partialMatchButtons, ...partialMatchButtons]),
-    ],
-  };
 };
 
 export const BasicTable = ({ correctWord }) => {
@@ -68,38 +29,16 @@ export const BasicTable = ({ correctWord }) => {
 
   const keyboard = useRef();
   const [attempts, setAttempts] = useState(0);
-  const [words, setWords] = useState(
-    [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
-  );
+  const { words, setWords, allowMoreKeys } = useWords({
+    maxNumberOfAttempts,
+    attempts,
+    numberOfLetters,
+  });
+  const { buttonTheme, setButtons } = useButtons();
+
   const [matches, setMatches] = useState(
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
   );
-  const allowMoreKeys = words[attempts].length < numberOfLetters;
-  const [buttons, setButtons] = useState({
-    clickedButtons: [],
-    partialMatchButtons: [],
-    perfectMatchButtons: [],
-  });
-  const buttonTheme = [
-    {
-      class: 'hg-grey',
-      buttons: buttons.clickedButtons.length
-        ? buttons.clickedButtons.join(' ')
-        : '',
-    },
-    {
-      class: 'hg-yellow',
-      buttons: buttons.partialMatchButtons.length
-        ? buttons.partialMatchButtons.join(' ')
-        : '',
-    },
-    {
-      class: 'hg-green',
-      buttons: buttons.perfectMatchButtons.length
-        ? buttons.perfectMatchButtons.join(' ')
-        : '',
-    },
-  ];
 
   const handleSubmit = useCallback(() => {
     const matches = validateWord(correctWord, words[attempts]);
@@ -107,7 +46,7 @@ export const BasicTable = ({ correctWord }) => {
       currMatches.map((match, index) => (index === attempts ? matches : match))
     );
     setButtons((buttons) => trackButtons(buttons, words[attempts], matches));
-  }, [setMatches, words, correctWord, attempts]);
+  }, [setMatches, words, correctWord, attempts, setButtons]);
 
   const onChange = (input) => {
     console.log('Input changed', input);
