@@ -10,7 +10,6 @@ import { Attempt } from './Attempt';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import { constants } from './constants';
-import { makeStyles } from '@mui/styles';
 
 const defaultLayout = [
   'q w e r t y u i o p',
@@ -35,7 +34,7 @@ const validateWord = (word, testWord) => {
     .join('');
 };
 
-const trackButtons = (word, matches) => {
+const trackButtons = (buttons, word, matches) => {
   const clickedButtons = [],
     perfectMatchButtons = [],
     partialMatchButtons = [];
@@ -49,26 +48,17 @@ const trackButtons = (word, matches) => {
     }
   }
   return {
-    clickedButtons,
-    perfectMatchButtons,
-    partialMatchButtons,
+    clickedButtons: [
+      ...new Set([...buttons.clickedButtons, ...clickedButtons]),
+    ],
+    perfectMatchButtons: [
+      ...new Set([...buttons.perfectMatchButtons, ...perfectMatchButtons]),
+    ],
+    partialMatchButtons: [
+      ...new Set([...buttons.partialMatchButtons, ...partialMatchButtons]),
+    ],
   };
 };
-
-const useStyles = makeStyles((theme) => ({
-  clickedButtonStyle: {
-    background: 'grey',
-    color: 'white',
-  },
-  partialMatchButtonStyle: {
-    backgroundColor: 'yellow',
-    color: 'white',
-  },
-  perfectMatchButtonStyle: {
-    backgroundColor: 'green',
-    color: 'white',
-  },
-}));
 
 export const BasicTable = ({ correctWord }) => {
   const numberOfLetters = correctWord.length;
@@ -90,7 +80,6 @@ export const BasicTable = ({ correctWord }) => {
     partialMatchButtons: [],
     perfectMatchButtons: [],
   });
-  const classes = useStyles();
   const buttonTheme = [
     {
       class: 'hg-grey',
@@ -117,13 +106,7 @@ export const BasicTable = ({ correctWord }) => {
     setMatches((currMatches) =>
       currMatches.map((match, index) => (index === attempts ? matches : match))
     );
-    setButtons(trackButtons(words[attempts], matches));
-    console.log(
-      'trackedButtons',
-      words[attempts],
-      matches,
-      trackButtons(words[attempts], matches)
-    );
+    setButtons((buttons) => trackButtons(buttons, words[attempts], matches));
   }, [setMatches, words, correctWord, attempts]);
 
   const onChange = (input) => {
@@ -135,13 +118,6 @@ export const BasicTable = ({ correctWord }) => {
     switch (button) {
       case '{enter}':
         handleSubmit();
-        // setButtons(trackButtons(words[attempts], matches[attempts]));
-        // console.log(
-        //   'trackedButtons',
-        //   words[attempts],
-        //   matches[attempts],
-        //   buttons
-        // );
         setAttempts((currAttempts) => currAttempts + 1);
         break;
       case '{bksp}':
