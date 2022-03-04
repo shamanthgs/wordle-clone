@@ -34,6 +34,32 @@ const validateWord = (word, testWord) => {
     .join('');
 };
 
+const trackButtons = (buttons, word, matches) => {
+  const clickedButtons = [],
+    perfectMatchButtons = [],
+    partialMatchButtons = [];
+  for (let i = 0; i < word.length; i++) {
+    if (parseInt(matches[i]) === PERFECT_MATCH) {
+      perfectMatchButtons.push(word[i].toLocaleLowerCase());
+    } else if (parseInt(matches[i]) === PARTIAL_MATCH) {
+      partialMatchButtons.push(word[i].toLocaleLowerCase());
+    } else {
+      clickedButtons.push(word[i].toLocaleLowerCase());
+    }
+  }
+  return {
+    clickedButtons: [
+      ...new Set([...buttons.clickedButtons, ...clickedButtons]),
+    ],
+    perfectMatchButtons: [
+      ...new Set([...buttons.perfectMatchButtons, ...perfectMatchButtons]),
+    ],
+    partialMatchButtons: [
+      ...new Set([...buttons.partialMatchButtons, ...partialMatchButtons]),
+    ],
+  };
+};
+
 export const BasicTable = ({ correctWord }) => {
   const numberOfLetters = correctWord.length;
   const numberOfRows = numberOfLetters + 1,
@@ -49,12 +75,38 @@ export const BasicTable = ({ correctWord }) => {
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
   );
   const allowMoreKeys = words[attempts].length < numberOfLetters;
+  const [buttons, setButtons] = useState({
+    clickedButtons: [],
+    partialMatchButtons: [],
+    perfectMatchButtons: [],
+  });
+  const buttonTheme = [
+    {
+      class: 'hg-grey',
+      buttons: buttons.clickedButtons.length
+        ? buttons.clickedButtons.join(' ')
+        : '',
+    },
+    {
+      class: 'hg-yellow',
+      buttons: buttons.partialMatchButtons.length
+        ? buttons.partialMatchButtons.join(' ')
+        : '',
+    },
+    {
+      class: 'hg-green',
+      buttons: buttons.perfectMatchButtons.length
+        ? buttons.perfectMatchButtons.join(' ')
+        : '',
+    },
+  ];
 
   const handleSubmit = useCallback(() => {
     const matches = validateWord(correctWord, words[attempts]);
     setMatches((currMatches) =>
       currMatches.map((match, index) => (index === attempts ? matches : match))
     );
+    setButtons((buttons) => trackButtons(buttons, words[attempts], matches));
   }, [setMatches, words, correctWord, attempts]);
 
   const onChange = (input) => {
@@ -125,6 +177,7 @@ export const BasicTable = ({ correctWord }) => {
             physicalKeyboardHighlight
             physicalKeyboardHighlightPress
             maxLength={numberOfLetters}
+            buttonTheme={buttonTheme}
           />
         </div>
       </div>

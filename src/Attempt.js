@@ -32,7 +32,6 @@ export const Attempt = ({
   word,
   matches,
 }) => {
-  // console.log(`word at index ${attempt} is ${word}`);
   const classes = useStyles();
 
   return (
