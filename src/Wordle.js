@@ -11,6 +11,7 @@ import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import { useWords, validateWord } from './useWords';
 import { useButtons, trackButtons } from './useButtons';
+import { useHandleKeyPress } from './useHandleKeyPress';
 
 const defaultLayout = [
   'q w e r t y u i o p',
@@ -52,32 +53,14 @@ export const BasicTable = ({ correctWord }) => {
     console.log('Input changed', input);
   };
 
-  const onKeyPress = (button) => {
-    console.log('Button pressed', button);
-    switch (button) {
-      case '{enter}':
-        handleSubmit();
-        setAttempts((currAttempts) => currAttempts + 1);
-        break;
-      case '{bksp}':
-        if (words[attempts].length > 0) {
-          setWords((currWords) =>
-            currWords.map((word, index) =>
-              index === attempts ? word.slice(0, -1) : word
-            )
-          );
-        }
-        break;
-      default:
-        if (allowMoreKeys) {
-          setWords((currWords) =>
-            currWords.map((word, index) =>
-              index === attempts ? word + button.toLocaleUpperCase() : word
-            )
-          );
-        }
-    }
-  };
+  const { handleKeyPress } = useHandleKeyPress({
+    allowMoreKeys,
+    attempts,
+    setAttempts,
+    words,
+    setWords,
+    handleSubmit,
+  });
 
   return (
     <>
@@ -112,7 +95,7 @@ export const BasicTable = ({ correctWord }) => {
             keyboardRef={(r) => (keyboard.current = r)}
             layout={keyboardLayout}
             onChange={onChange}
-            onKeyPress={onKeyPress}
+            onKeyPress={handleKeyPress}
             physicalKeyboardHighlight
             physicalKeyboardHighlightPress
             maxLength={numberOfLetters}
