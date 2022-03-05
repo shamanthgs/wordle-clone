@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -83,32 +83,45 @@ export const BasicTable = ({ correctWord }) => {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow key="header">
-              <TableCell colSpan={numberOfColumns} sx={{ textAlign: 'center' }}>
-                Wordle
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {[...Array.from({ length: numberOfRows }).keys()].map(
-              (attemptIndex) => (
-                <Attempt
-                  key={'attempt' + attemptIndex}
-                  correctWord={correctWord}
-                  word={words[attemptIndex]}
-                  matches={matches[attemptIndex]}
-                  attempt={attemptIndex}
-                  numberOfLetters={numberOfLetters}
-                />
-              )
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <TableContainer component={Paper} style={{ width: '40%' }}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow key="header">
+                <TableCell
+                  colSpan={numberOfColumns}
+                  sx={{ textAlign: 'center' }}
+                >
+                  Wordle
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[...Array.from({ length: numberOfRows }).keys()].map(
+                (attemptIndex) => (
+                  <Attempt
+                    key={'attempt' + attemptIndex}
+                    correctWord={correctWord}
+                    word={words[attemptIndex]}
+                    matches={matches[attemptIndex]}
+                    attempt={attemptIndex}
+                    numberOfLetters={numberOfLetters}
+                  />
+                )
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          position: 'absolute',
+          bottom: '5%',
+        }}
+      >
         <div style={{ width: '35%' }}>
           <Keyboard
             keyboardRef={(r) => (keyboard.current = r)}

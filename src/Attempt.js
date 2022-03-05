@@ -6,8 +6,8 @@ import { constants } from './constants';
 
 const useStyles = makeStyles((theme) => ({
   letterInput: {
-    width: '20px',
-    height: '20px',
+    width: '45px',
+    height: '45px',
     fontWeight: 'bold',
     textAlign: 'center',
     outline: 'none',
