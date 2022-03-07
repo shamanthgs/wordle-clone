@@ -6,15 +6,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import { Attempt } from './Attempt';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import { useWords, validateWord } from './useWords';
 import { useButtons, trackButtons } from './useButtons';
 import { useHandleKeyPress } from './useHandleKeyPress';
-import { messages } from './messages';
+import { Notification } from './Notification';
 
 const defaultLayout = [
   'q w e r t y u i o p',
@@ -33,13 +31,13 @@ export const BasicTable = ({ correctWord }) => {
 
   const keyboard = useRef();
   const [attempts, setAttempts] = useState(0);
+  const [showMessage, setShowMessage] = useState(false);
   const { words, setWords, allowMoreKeys } = useWords({
     maxNumberOfAttempts,
     attempts,
     numberOfLetters,
   });
   const { buttonTheme, setButtons } = useButtons();
-  const [showMessage, setShowMessage] = useState(false);
 
   const [matches, setMatches] = useState(
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
@@ -56,14 +54,6 @@ export const BasicTable = ({ correctWord }) => {
     if (isGameOver || isGameWon) {
       setShowMessage(true);
     }
-  };
-
-  const handleCloseMessage = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setShowMessage(false);
   };
 
   const onChange = (input) => {
@@ -135,19 +125,11 @@ export const BasicTable = ({ correctWord }) => {
           />
         </div>
       </div>
-      <Snackbar
-        open={showMessage}
-        autoHideDuration={6000}
-        onClose={handleCloseMessage}
-      >
-        <Alert
-          severity={isGameWon ? 'success' : 'info'}
-          sx={{ width: '100%' }}
-          onClose={handleCloseMessage}
-        >
-          {isGameWon ? messages.success : messages.failure}
-        </Alert>
-      </Snackbar>
+      <Notification
+        isGameWon={isGameWon}
+        showMessage={showMessage}
+        setShowMessage={setShowMessage}
+      />
     </>
   );
 };
