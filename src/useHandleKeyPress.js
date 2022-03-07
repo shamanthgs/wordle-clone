@@ -1,21 +1,19 @@
 export const useHandleKeyPress = ({
   handleSubmit,
-  setAttempts,
   words,
   attempts,
   setWords,
-  allowMoreKeys,
   isGameOver,
   isGameWon,
+  numberOfLetters,
 }) => {
+  const allowMoreKeys = words[attempts].length < numberOfLetters;
   const handleKeyPress = (button) => {
     console.log('Button pressed', button);
     switch (button) {
       case '{enter}':
         if (allowMoreKeys) return;
         handleSubmit();
-        if (isGameOver || isGameWon) return;
-        setAttempts((currAttempts) => currAttempts + 1);
         break;
       case '{backspace}':
         if (isGameOver || isGameWon) return;

@@ -32,20 +32,27 @@ export const BasicTable = ({ correctWord }) => {
   const keyboard = useRef();
   const [attempts, setAttempts] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
-  const { words, setWords, allowMoreKeys } = useWords({
+  const {
+    words,
+    setWords,
+    isGameOver,
+    isGameWon,
+    setIsGameOver,
+    setIsGameWon,
+  } = useWords({
     maxNumberOfAttempts,
-    attempts,
-    numberOfLetters,
   });
   const { buttonTheme, setButtons } = useButtons();
 
   const [matches, setMatches] = useState(
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
   );
-  const isGameOver = attempts === maxNumberOfAttempts - 1;
-  const isGameWon = words[attempts] === correctWord;
 
   const handleSubmit = () => {
+    const isGameOver = attempts === maxNumberOfAttempts - 1;
+    const isGameWon = words[attempts] === correctWord;
+    setIsGameOver(isGameOver);
+    setIsGameWon(isGameWon);
     const matches = validateWord(correctWord, words[attempts]);
     setMatches((currMatches) =>
       currMatches.map((match, index) => (index === attempts ? matches : match))
@@ -53,6 +60,8 @@ export const BasicTable = ({ correctWord }) => {
     setButtons((buttons) => trackButtons(buttons, words[attempts], matches));
     if (isGameOver || isGameWon) {
       setShowMessage(true);
+    } else {
+      setAttempts((currAttempts) => currAttempts + 1);
     }
   };
 
@@ -61,9 +70,8 @@ export const BasicTable = ({ correctWord }) => {
   };
 
   const { handleKeyPress } = useHandleKeyPress({
-    allowMoreKeys,
+    numberOfLetters,
     attempts,
-    setAttempts,
     words,
     setWords,
     handleSubmit,
