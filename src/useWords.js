@@ -17,16 +17,19 @@ export const validateWord = (word, currentWord) => {
     .join('');
 };
 
-export const useWords = ({
-  maxNumberOfAttempts,
-  attempts,
-  numberOfLetters,
-}) => {
+export const useWords = ({ maxNumberOfAttempts }) => {
   const [words, setWords] = useState(
     [...Array.from({ length: maxNumberOfAttempts })].map(() => '')
   );
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isGameWon, setIsGameWon] = useState(false);
 
-  const allowMoreKeys = words[attempts].length < numberOfLetters;
-
-  return { words, setWords, allowMoreKeys };
+  return {
+    words,
+    setWords,
+    isGameOver,
+    isGameWon,
+    setIsGameOver,
+    setIsGameWon,
+  };
 };
