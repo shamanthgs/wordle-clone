@@ -17,7 +17,7 @@ export const useHandleKeyPress = ({
         if (isGameOver || isGameWon) return;
         setAttempts((currAttempts) => currAttempts + 1);
         break;
-      case '{bksp}':
+      case '{backspace}':
         if (isGameOver || isGameWon) return;
         if (words[attempts].length > 0) {
           setWords((currWords) =>
